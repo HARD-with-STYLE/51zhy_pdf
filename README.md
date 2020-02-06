@@ -2,8 +2,8 @@
 ====================
 
 [悦读](https://yd.51zhy.cn/)  
-测试时间：2020/02/06 20点52分 Release v1.0.1  
-windows用户可跳过部署过程，直接下载[编译好的exe](https://github.com/shylocks/51zhy_pdf/releases)。由于无法打包hummus库，使用`dev.exe [id] [timeout]`下载完成后，再调用`merge_pdf [id]`合成   
+测试时间：2020/02/06 20点52分 Release v1.0.2  
+windows用户可跳过部署过程，直接下载[编译好的exe](https://github.com/shylocks/51zhy_pdf/releases)。由于无法打包hummus库，使用`index-win.exe [id]`下载完成后，再调用`merge_pdf [id]`合成   
 **项目依赖node环境**  
 部署过程:  
 * 克隆项目 `git clone https://github.com/shylocks/51zhy_pdf.git`
