@@ -10,6 +10,12 @@ let merge = !!+m, timeout = t ? t : 10, page = p ? p.split(',') : [];
 if (page.length) merge = false;
 axios.defaults.timeout = timeout * 1000;
 
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
 try {
     hummus = require('hummus');
 } catch (e) {
@@ -164,6 +170,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                             new_page.push(page_url);
                             console.log(`第${i + 1}页PDF下载失败`);
                         });
+                    await sleep(10000);
                 }
                 page_list = new_page;
             }
