@@ -1,17 +1,21 @@
 const axios = require('axios');
-axios.defaults.timeout = 10000;
 const Crypto = require("crypto-js");
 const fs = require('fs');
 let hummus;
 const memoryStreams = require('memory-streams');
+const argv = require('minimist')(process.argv.slice(2));
+let id = argv['_'][0], {m, t, p} = argv;
+if (!id) id = 19489633;
+let merge = !!+m, timeout = t ? t : 10, page = p ? p.split(',') : [];
+if (page.length) merge = false;
+axios.defaults.timeout = timeout * 1000;
 
-let id = 19489633, merge = true, authorKey = undefined;
-if (process.argv.length >= 3)
-    id = process.argv[2];
-if (process.argv.length >= 4)
-    axios.defaults.timeout = process.argv[3] * 1000;
-if (process.argv.length >= 5)
-    merge = !!+process.argv[4];
+function sleep(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
 try {
     hummus = require('hummus');
 } catch (e) {
@@ -128,15 +132,20 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
             if (!merge && !fs.existsSync(String(id))) {
                 fs.mkdirSync(String(id));
             }
-            let base_url = data['Url'].replace(".pdf", "_pdf/");
-            let page = [];
-            for (let i = 0; i < pages; ++i) {
-                page.push(`${base_url}/${i + 1}.pdf`);
+            let base_url = data['Url'].replace(".pdf", "_pdf");
+            let page_list = [];
+            if (page.length) {
+                page_list = page.map(vo => `${base_url}/${vo}.pdf`);
+                pages = page_list.length;
+            } else {
+                for (let i = 0; i < pages; ++i) {
+                    page_list.push(`${base_url}/${i + 1}.pdf`);
+                }
             }
-            while (page.length) {
+            while (page_list.length) {
                 let new_page = [];
-                for (let i = 0; i < page.length; ++i) {
-                    let page_url = page[i];
+                for (let i = 0; i < page_list.length; ++i) {
+                    let page_url = page_list[i];
                     await axios.get(page_url,
                         {
                             responseType: 'arraybuffer'
@@ -154,15 +163,16 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                                 index: i,
                                 buffer: buffer,
                             });
-                            console.log(`已下载第${i + 1}页PDF，共下载${buffer_list.length}/${pages}页`);
-                            if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${i}.pdf`, buffer);
+                            console.log(`已下载第${/.*_pdf\/(.*).pdf/.exec(page_url)[1]}页PDF，共下载${buffer_list.length}/${pages}页`);
+                            if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${/.*_pdf\/(.*).pdf/.exec(page_url)[1]}.pdf`, buffer);
                         })
                         .catch((error) => {
                             new_page.push(page_url);
                             console.log(`第${i + 1}页PDF下载失败`);
                         });
+                    await sleep(10000);
                 }
-                page = new_page;
+                page_list = new_page;
             }
             if (merge && buffer_list.length === pages) {
                 console.log(`下载完成，开始合成PDF`);
