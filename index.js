@@ -5,17 +5,16 @@ const fs = require('fs');
 let hummus;
 const memoryStreams = require('memory-streams');
 
-let id = 621967, merge = true, authorKey = undefined;
+let id = 19489633, merge = true, authorKey = undefined;
 if (process.argv.length >= 3)
     id = process.argv[2];
 if (process.argv.length >= 4)
     axios.defaults.timeout = process.argv[3] * 1000;
 if (process.argv.length >= 5)
     merge = !!+process.argv[4];
-try{
+try {
     hummus = require('hummus');
-}
-catch (e) {
+} catch (e) {
     merge = false
 }
 let deviceKey = '3uKpxtFAoOeqQQ0S';
@@ -104,6 +103,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
 }).then(() => {
     console.log(`开始下载：${detail['Data']['Title']}`);
     let authorizeToken = detail['Data']['ExtendData']['AuthorizeToken'];
+    let pages = detail['Data']['NumberOfPages'];
     const authorize_data = {
         'AccessToken': 'null',
         'DeviceToken': deviceToken,
@@ -113,7 +113,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
         'AppId': 3,
         'id': id,
         'IsOnline': true,
-        'authorizeToken': authorizeToken,
+        //'authorizeToken': authorizeToken,
     };
     const url_encoded = obj => Object.keys(obj).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])).join('&');
     axios.post('https://bridge.51zhy.cn/transfer//content/authorize', url_encoded(authorize_data), {
@@ -128,7 +128,11 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
             if (!merge && !fs.existsSync(String(id))) {
                 fs.mkdirSync(String(id));
             }
-            let page = data['SplitFileUrls'];
+            let base_url = data['Url'].replace(".pdf", "_pdf/");
+            let page = [];
+            for (let i = 0; i < pages; ++i) {
+                page.push(`${base_url}/${i + 1}.pdf`);
+            }
             while (page.length) {
                 let new_page = [];
                 for (let i = 0; i < page.length; ++i) {
@@ -150,7 +154,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                                 index: i,
                                 buffer: buffer,
                             });
-                            console.log(`已下载第${i + 1}页PDF，共下载${buffer_list.length}/${data['SplitFileUrls'].length}页`);
+                            console.log(`已下载第${i + 1}页PDF，共下载${buffer_list.length}/${pages}页`);
                             if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${i}.pdf`, buffer);
                         })
                         .catch((error) => {
@@ -160,7 +164,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                 }
                 page = new_page;
             }
-            if (merge && buffer_list.length === data['SplitFileUrls'].length) {
+            if (merge && buffer_list.length === pages) {
                 console.log(`下载完成，开始合成PDF`);
                 buffer_list.sort((a, b) => {
                         return a.index - b.index

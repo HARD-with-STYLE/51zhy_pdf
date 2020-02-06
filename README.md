@@ -2,8 +2,8 @@
 ====================
 
 [悦读](https://yd.51zhy.cn/)  
-
-windows用户可跳过部署过程，直接下载[编译好的exe](https://www.lanzous.com/i93c4dg)。由于无法打包hummus库，使用`dev.exe [id] [timeout]`下载完成后，再调用`merge_pdf [id]`合成   
+测试时间：2020/02/06 20点00分 Release v1.0.1  
+windows用户可跳过部署过程，直接下载[编译好的exe](https://github.com/shylocks/51zhy_pdf/releases)。由于无法打包hummus库，使用`dev.exe [id] [timeout]`下载完成后，再调用`merge_pdf [id]`合成   
 **项目依赖node环境**  
 部署过程:  
 * 克隆项目 `git clone https://github.com/shylocks/51zhy_pdf.git`
@@ -23,4 +23,4 @@ npm install --registry=https://registry.npm.taobao.org
     
 遇到大于1000页的PDF可能出现问题，可以分页下载后使用`python merge_pdf.py [id]`合成
 
-代码仅供学习与参考，请合理使用服务器资源。**版权问题概不负责。**
+代码仅供学习与参考，**请合理使用服务器资源。版权问题概不负责。**
