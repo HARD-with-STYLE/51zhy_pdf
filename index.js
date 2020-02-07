@@ -6,7 +6,7 @@ const memoryStreams = require('memory-streams');
 const argv = require('minimist')(process.argv.slice(2));
 let id = argv['_'][0], {m, t, p} = argv;
 if (!id) id = 19489633;
-let merge = !!+m, timeout = t ? t : 10, page = p ? p.split(',') : [];
+let merge = !!+m, timeout = t ? t : 10, page = p ? String(p).indexOf(',') > -1 ? p.split(',') : [p] : [];
 if (page.length) merge = false;
 axios.defaults.timeout = timeout * 1000;
 
