@@ -158,27 +158,37 @@ function main() {
             if (response['data']['Code'] !== 200) {
                 console.log('接口失效，' + response['data']['Description']);
             } else {
+                if (page.includes('skip')) return Promise.resolve();
                 let authorKey = makeKey(data['Key']);
                 let buffer_list = [];
                 if (!merge && !fs.existsSync(String(id))) {
                     fs.mkdirSync(String(id));
                 }
-                let page_list = data['SplitFileUrls'];
+                let page_list = [];
                 if (page.length) {
-                    let tmp_list = [];
                     for (let i in page) {
-                        tmp_list.push(page_list[page[i - 1]]);
+                        page_list.push({
+                            index: page[i] - 1,
+                            url: data['SplitFileUrls'][page[i] - 1]
+                        });
                     }
-                    page_list = tmp_list;
                     pages = page_list.length;
+                } else {
+                    page_list = data['SplitFileUrls'].map((vo, index) => {
+                        return {
+                            index: index,
+                            url: vo
+                        }
+                    })
                 }
                 while (page_list.length) {
                     let new_page = [];
                     for (let i = 0; i < page_list.length; ++i) {
-                        let page_url = page_list[i];
-                        let path = `${id}/${id}-${detail['Data']['Title']}-${i + 1}.pdf`;
+                        let page_url = page_list[i].url;
+                        let index = page_list[i].index + 1;
+                        let path = `${id}/${id}-${detail['Data']['Title']}-${index}.pdf`;
                         if (!merge && fs.existsSync(path)) {
-                            console.log(`第${i + 1}页PDF已下载，跳过该页`);
+                            console.log(`第${index}页PDF已下载，跳过该页`);
                             continue;
                         }
                         await axios.get(page_url,
@@ -198,13 +208,13 @@ function main() {
                                     index: i,
                                     buffer: buffer,
                                 });
-                                console.log(`已下载第${i + 1}页PDF，共下载${buffer_list.length}/${pages}页`);
-                                if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${i + 1}.pdf`, buffer);
+                                console.log(`已下载第${index}页PDF，共下载${buffer_list.length}/${pages}页`);
+                                if (!merge) fs.writeFileSync(`${path}`, buffer);
                             })
                             .catch((error) => {
                                 console.log(error);
                                 new_page.push(page_url);
-                                console.log(`第${i + 1}页PDF下载失败`);
+                                console.log(`第${index}页PDF下载失败`);
                             });
                         await sleep(10000);
                     }
