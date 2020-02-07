@@ -206,7 +206,7 @@ function main() {
                                 let buffer = wordArrayToU8(c);
                                 if (buffer.length < 2000) {
                                     console.log(`第${index}页PDF文件大小不正常：${buffer.length}`);
-                                    new_page.push(page_url);
+                                    new_page.push(page_list[i]);
                                     return;
                                 }
                                 buffer_list.push({
@@ -218,7 +218,7 @@ function main() {
                             })
                             .catch((error) => {
                                 console.log(error);
-                                new_page.push(page_url);
+                                new_page.push(page_list[i]);
                                 console.log(`第${index}页PDF下载失败`);
                             });
                         await sleep(10000);
