@@ -1,30 +1,33 @@
 #!/usr/bin/env python
-from PyPDF2 import PdfFileReader, PdfFileWriter
+# coding:utf-8
+from PyPDF2 import PdfFileMerger, PdfFileReader, PdfFileWriter
 import os
 import sys
+import json
 
 
-def pdf_cat(input_files, output):
-    input_streams = []
-    try:
-        for input_file in input_files:
-            input_streams.append(open(input_file, 'rb'))
-        writer = PdfFileWriter()
-        for reader in map(PdfFileReader, input_streams):
-            for n in range(reader.getNumPages()):
-                writer.addPage(reader.getPage(n))
-        output_stream = open(output, 'w+b')
-        writer.write(output_stream)
-    finally:
-        for f in input_streams:
-            f.close()
+def add_bookmarks(path, file_dir):
+    with open(file_dir + '\\bookmark.json', 'rb') as f:
+        bookmarks = json.load(f)['Data']
+    book = PdfFileReader(path)
+    pdf = PdfFileWriter()
+    pdf.cloneDocumentFromReader(book)
+    for bookmark in bookmarks:
+        pdf.addBookmark(bookmark['Title'], bookmark['Page'] - 1)
+    with open(path[0:path.rfind('.')] + '.bookmark.pdf', 'wb') as fout:
+        pdf.write(fout)
 
 
 def file_name_walk(file_dir):
     for root, dirs, files in os.walk(file_dir):
         files.sort(key=lambda x: int(x[x.rfind('-') + 1:][:-4]))
         file_list = [file_dir + '\\' + file for file in files]
-        pdf_cat(file_list, files[0][:files[0].rfind('-')] + '.pdf')
+        merger = PdfFileMerger(strict=False)
+        for pdf in file_list:
+            merger.append(pdf)
+        path = files[0][:files[0].rfind('-')] + '.pdf'
+        merger.write(path)
+        add_bookmarks(path, file_dir)
 
 
 if __name__ == '__main__':

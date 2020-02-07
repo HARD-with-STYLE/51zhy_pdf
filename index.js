@@ -118,13 +118,38 @@ function getDeviceToken(id) {
     });
 }
 
+async function getBookmark(id) {
+    const list_data = {
+        'AccessToken': 'null',
+        'DeviceToken': deviceToken,
+        'ApiName': '/tableofcontent/list',
+        'BridgePlatformName': 'phei_yd_web',
+        'random': Math.random(),
+        'AppId': 3,
+        'objectId': id,
+    };
+    const url_encoded = obj => Object.keys(obj).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])).join('&');
+    let url = 'https://bridge.51zhy.cn/transfer/tableofcontent/list';
+    axios.get(url + "?" + url_encoded(list_data)).then(res => {
+        if (!merge && !fs.existsSync(String(id))) {
+            fs.mkdirSync(String(id));
+        }
+        fs.writeFileSync(`${id}/bookmark.json`, JSON.stringify(res.data));
+        return Promise.resolve();
+    }).catch((error) => {
+        console.log(error);
+        return Promise.reject();
+    })
+}
+
 function main() {
     axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_param}).then(res => {
         detail = res.data;
-    }).then(() => {
+    }).then(async () => {
         console.log(`开始下载：${detail['Data']['Title']}`);
         let authorizeToken = detail['Data']['ExtendData']['AuthorizeToken'];
         let pages = detail['Data']['NumberOfPages'];
+        await getBookmark(id);
         const authorize_data = `IsOnline=true&AccessToken=null&DeviceToken=${deviceToken}&ApiName=content%2Fauthorize&BridgePlatformName=phei_yd_web&random=${Math.random()}&AppId=3&id=${id}&type=rsa&devicekey=-----BEGIN+PUBLIC+KEY-----%0D%0AMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEAoUs9sSlRrpz5NigfUCJD%0D%0AQgrMjQwMjE1MTI4MTQ3MTkzMTYxMTYyMTYwMTYyMTkyMTk4MTQ0MTYxMjIyMjM4MTQ0MjQzMjQzMTI4MTk5MjQ1MTYyMTc2MTYwMjQ5MjA2MTYxMTY0MTQ0MTI4MTY1MjAyMTQ0MjEwMjMwMTQ1%2B35fBfO1%2FWOS1Mho1Bd%2BM5PgnCa5Juo4oL2ba7EdsJU4RsBl8EiiETWEr8KbH%0D%0AC0udrJB8%2Fdc5UO1IY9houQVB36G8rWdVLvpy9gHufwOH5Nhg7WcmfRGqk2jKVatH%0D%0AC3hsOraYDMB%2FjWPmaXnZdN1qmJxJvohW%2FTmOGQ73Oh2HEc1zdvMymvZS9LGZVRLx%0D%0AZkyaYD5yoCoJhK5vt%2BkKqcRxCUqX8aLBsUHI%2BDZx%2Fz%2FXO285iMRjDzvTg477nSJ3%0D%0ADPXvFDwcIiCXSszUMA6utALyFAQGAvmIGYuRL6TFABYq9OUXw7CTm1QqgoYZAGKH%0D%0AKQIBAw%3D%3D%0D%0A-----END+PUBLIC+KEY-----%0D%0A&authorizeToken=${escape(authorizeToken)}`;
         axios.post('https://bridge.51zhy.cn/transfer//content/authorize', authorize_data, {
             headers: {'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"}
