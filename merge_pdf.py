@@ -13,13 +13,21 @@ def add_bookmarks(path, file_dir):
     pdf = PdfFileWriter()
     pdf.cloneDocumentFromReader(book)
     for bookmark in bookmarks:
-        pdf.addBookmark(bookmark['Title'], bookmark['Page'] - 1)
-    with open(path[0:path.rfind('.')] + '.bookmark.pdf', 'wb') as fout:
-        pdf.write(fout)
+        try:
+            pdf.addBookmark(bookmark['Title'], bookmark['Page'] - 1)
+        except:
+            break
+    try:
+        with open(path[0:path.rfind('.')] + '.bookmark.pdf', 'wb') as fout:
+            pdf.write(fout)
+    except FileNotFoundError:
+        pass
 
 
 def file_name_walk(file_dir):
     for root, dirs, files in os.walk(file_dir):
+        if 'bookmark.json' in files:
+            files.remove('bookmark.json')
         files.sort(key=lambda x: int(x[x.rfind('-') + 1:][:-4]))
         file_list = [file_dir + '\\' + file for file in files]
         merger = PdfFileMerger(strict=False)
