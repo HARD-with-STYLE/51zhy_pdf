@@ -204,6 +204,11 @@ function main() {
                                     padding: Crypto.pad.Pkcs7
                                 });
                                 let buffer = wordArrayToU8(c);
+                                if (buffer.length < 2000) {
+                                    console.log(`第${index}页PDF文件大小不正常：${buffer.length}`);
+                                    new_page.push(page_url);
+                                    return;
+                                }
                                 buffer_list.push({
                                     index: i,
                                     buffer: buffer,
