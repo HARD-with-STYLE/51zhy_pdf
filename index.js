@@ -186,7 +186,7 @@ function main() {
                     for (let i = 0; i < page_list.length; ++i) {
                         let page_url = page_list[i].url;
                         let index = page_list[i].index + 1;
-                        let path = `${id}/${id}-${detail['Data']['Title']}-${index}.pdf`;
+                        let path = `${id}/${id}-${detail['Data']['Title'].replace(/[\/\\:]/g, "_")}-${index}.pdf`;
                         if (!merge && fs.existsSync(path)) {
                             console.log(`第${index}页PDF已下载，跳过该页`);
                             continue;
