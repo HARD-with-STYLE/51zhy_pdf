@@ -151,6 +151,11 @@ function main() {
                     let new_page = [];
                     for (let i = 0; i < page_list.length; ++i) {
                         let page_url = page_list[i];
+                        let path = `${id}/${id}-${detail['Data']['Title']}-${i + 1}.pdf`;
+                        if (!merge && fs.existsSync(path)) {
+                            console.log(`第${i + 1}页PDF已下载，跳过该页`);
+                            continue;
+                        }
                         await axios.get(page_url,
                             {
                                 responseType: 'arraybuffer'
