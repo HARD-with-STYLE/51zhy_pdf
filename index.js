@@ -3,6 +3,13 @@ const Crypto = require("crypto-js");
 const fs = require('fs');
 let hummus;
 const memoryStreams = require('memory-streams');
+const {JSEncrypt} = require('./jsencrypt');
+
+const rsa = {
+    "privateKey": "-----BEGIN RSA PRIVATE KEY-----\r\nMIIEowIBAAKCAQEAoUs9sSlRrpz5NigfUCJDQgr+35fBfO1/WOS1Mho1Bd+M5Pgn\r\nCa5Juo4oL2ba7EdsJU4RsBl8EiiETWEr8KbHC0udrJB8/dc5UO1IY9houQVB36G8\r\nrWdVLvpy9gHufwOH5Nhg7WcmfRGqk2jKVatHC3hsOraYDMB/jWPmaXnZdN1qmJxJ\r\nvohW/TmOGQ73Oh2HEc1zdvMymvZS9LGZVRLxZkyaYD5yoCoJhK5vt+kKqcRxCUqX\r\n8aLBsUHI+DZx/z/XO285iMRjDzvTg477nSJ3DPXvFDwcIiCXSszUMA6utALyFAQG\r\nAvmIGYuRL6TFABYq9OUXw7CTm1QqgoYZAGKHKQIBAwKCAQBrh352G4vJvft5cBTg\r\nFteBXKnqZSuonlTl7c4hZs4D6l3t+sSxHtvRtBrKRJHy2kgY3rZ1ZlK2xa2I63Kg\r\nby9c3RPIYFNT5NDgnjBCkEXQrivqa9MeRON0pvdOq/RUrQVDOutI727+C8cM8Ibj\r\nx4SyUEgnJGVd1apeQpmbppD4ko1xl15G7HjlLiFfrzo/6C4tzM9w2h2wslZhygZN\r\nx7Q5szEWFd3W69GpuMkQoIXpW7aC29ahd9g3A2W/lPPo0yiy3HaY7Wu0zpBMwocm\r\ncsWxoV8ABJzlRLlkgzTOy1O1Czf26GYDpmUB+eUPf1YKYsORtYIEYw7PdrUUxXFp\r\nPzKDAoGBAM1/ZgWC3Zo01KlgpTIMT2iW9XEzIrjTdyQPuGwUUfQMCdZykC3vgwOB\r\n2Kffg4ZJtQATEboPc5nBRFeakvK9KNEWx070pS/ljXy3znOWk0ErhsBRAPmCxdPs\r\nsiTzlzJCnpWj9fU6LTOknyCGWfYZ63dxdqGS6oCmSZee2vGSGNWTAoGBAMju0zbR\r\nSAdwn7Ko4u3N8dk2JMsaiU0+c61SSiPMFW8DtfpMjXfuRUuEQJo/dLuCBd8x7xvv\r\n+2OdeFi+RBFk2kkYXTiuuxGaeH5YnL1M4w1W/SBDNDdHc61HVeAGRn7h04h9sXfD\r\nUrzx9ZkSC83Wlo4o3jMqMXy92INEgv1QauXTAoGBAIj/mVkB6RF4jcZAbiFdikW5\r\n+PYiFyXiT21f0EgNi/gIBo73CslKV1er5cU/rQQxI1ViC9FfomaA2DpnDKHTcItk\r\nhN9Nw3VDs6h6iaJkYityWdWLVfusg+KdzBiiZMwsabkX+U4myM0YahWu5qQRR6T2\r\nTxZh8asZhmUUkfZhZeO3AoGBAIX0jM82MAT1v8xwl0kz9pDOwzIRsN4ponOMMW0y\r\nuPStI/wzCPqe2N0C1bwqTdJWrpTL9L1Kp5e+UDspgrZDPDC66NB0fLZm+v7lvdOI\r\nl145/hWCIs+E98jaOUAELv9BN7BTy6Us4dNL+RC2sok5ubQbPszGy6h+kFeDAf41\r\nnJk3AoGBAIr5Ob43WUDXjT6cKaSopGO5/0k+lJZWCO+v2b12iOuD59/n/RME/pF/\r\n5gDzidHBY7QbYAsZvZhcSI31e78TKW9YnZBIwuCozneYc2zVtHFWNfveR3egpXXz\r\nC17FXRssYiErhASMp1FWQCrFQ/r0GmGpyK5ZNzVLEi+Ii61iVaPk\r\n-----END RSA PRIVATE KEY-----\r\n",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\r\nMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEAoUs9sSlRrpz5NigfUCJD\r\nQgr+35fBfO1/WOS1Mho1Bd+M5PgnCa5Juo4oL2ba7EdsJU4RsBl8EiiETWEr8KbH\r\nC0udrJB8/dc5UO1IY9houQVB36G8rWdVLvpy9gHufwOH5Nhg7WcmfRGqk2jKVatH\r\nC3hsOraYDMB/jWPmaXnZdN1qmJxJvohW/TmOGQ73Oh2HEc1zdvMymvZS9LGZVRLx\r\nZkyaYD5yoCoJhK5vt+kKqcRxCUqX8aLBsUHI+DZx/z/XO285iMRjDzvTg477nSJ3\r\nDPXvFDwcIiCXSszUMA6utALyFAQGAvmIGYuRL6TFABYq9OUXw7CTm1QqgoYZAGKH\r\nKQIBAw==\r\n-----END PUBLIC KEY-----\r\n"
+};
+
 const argv = require('minimist')(process.argv.slice(2));
 let id = argv['_'][0], {m, t, p} = argv;
 if (!id) id = 19489633;
@@ -22,7 +29,7 @@ try {
     merge = false
 }
 let deviceKey = '3uKpxtFAoOeqQQ0S';
-let deviceToken = 'ebookF32BE444AF96C3BB0E71BF02D648DD9C';
+let deviceToken = 'ebook9577BC7B6E7170F6377D8F517B72F3D8';
 
 console.logCopy = console.log.bind(console);
 console.log = function (data) {
@@ -56,12 +63,10 @@ const combineMultiplePDFBuffers = async (bufferList, name) => {
     }
 };
 
-function makeKey(e, t) {
-    var n = Crypto.enc.Utf8.parse(e);
-    return Crypto.AES.decrypt(t, n, {
-        mode: Crypto.mode.ECB,
-        padding: Crypto.pad.Pkcs7
-    })
+function makeKey(e) {
+    const decrypt = new JSEncrypt();
+    decrypt.setPrivateKey(rsa['privateKey']);
+    return decrypt.decrypt(e);
 }
 
 function btoa(s) {
@@ -108,39 +113,27 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
     console.log(`开始下载：${detail['Data']['Title']}`);
     let authorizeToken = detail['Data']['ExtendData']['AuthorizeToken'];
     let pages = detail['Data']['NumberOfPages'];
-    const authorize_data = {
-        'AccessToken': 'null',
-        'DeviceToken': deviceToken,
-        'ApiName': 'content/authorize',
-        'BridgePlatformName': 'phei_yd_web',
-        'random': Math.random(),
-        'AppId': 3,
-        'id': id,
-        'IsOnline': true,
-        //'authorizeToken': authorizeToken,
-    };
-    const url_encoded = obj => Object.keys(obj).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(obj[k])).join('&');
-    axios.post('https://bridge.51zhy.cn/transfer//content/authorize', url_encoded(authorize_data), {
+    const authorize_data = `IsOnline=true&AccessToken=null&DeviceToken=${deviceToken}&ApiName=content%2Fauthorize&BridgePlatformName=phei_yd_web&random=${Math.random()}&AppId=3&id=${id}&type=rsa&devicekey=-----BEGIN+PUBLIC+KEY-----%0D%0AMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEAoUs9sSlRrpz5NigfUCJD%0D%0AQgrMjQwMjE1MTI4MTQ3MTkzMTYxMTYyMTYwMTYyMTkyMTk4MTQ0MTYxMjIyMjM4MTQ0MjQzMjQzMTI4MTk5MjQ1MTYyMTc2MTYwMjQ5MjA2MTYxMTY0MTQ0MTI4MTY1MjAyMTQ0MjEwMjMwMTQ1%2B35fBfO1%2FWOS1Mho1Bd%2BM5PgnCa5Juo4oL2ba7EdsJU4RsBl8EiiETWEr8KbH%0D%0AC0udrJB8%2Fdc5UO1IY9houQVB36G8rWdVLvpy9gHufwOH5Nhg7WcmfRGqk2jKVatH%0D%0AC3hsOraYDMB%2FjWPmaXnZdN1qmJxJvohW%2FTmOGQ73Oh2HEc1zdvMymvZS9LGZVRLx%0D%0AZkyaYD5yoCoJhK5vt%2BkKqcRxCUqX8aLBsUHI%2BDZx%2Fz%2FXO285iMRjDzvTg477nSJ3%0D%0ADPXvFDwcIiCXSszUMA6utALyFAQGAvmIGYuRL6TFABYq9OUXw7CTm1QqgoYZAGKH%0D%0AKQIBAw%3D%3D%0D%0A-----END+PUBLIC+KEY-----%0D%0A&authorizeToken=${escape(authorizeToken)}`;
+    axios.post('https://bridge.51zhy.cn/transfer//content/authorize', authorize_data, {
         headers: {'Content-Type': "application/x-www-form-urlencoded; charset=UTF-8"}
     }).then(async function (response) {
         data = response['data']['Data'];
         if (response['data']['Code'] !== 200) {
             console.log('接口失效，' + response['data']['Description']);
         } else {
-            authorKey = makeKey(deviceKey, data['Key']);
+            let authorKey = makeKey(data['Key']);
             let buffer_list = [];
             if (!merge && !fs.existsSync(String(id))) {
                 fs.mkdirSync(String(id));
             }
-            let base_url = data['Url'].replace(".pdf", "_pdf");
-            let page_list = [];
+            let page_list = data['SplitFileUrls'];
             if (page.length) {
-                page_list = page.map(vo => `${base_url}/${vo}.pdf`);
-                pages = page_list.length;
-            } else {
-                for (let i = 0; i < pages; ++i) {
-                    page_list.push(`${base_url}/${i + 1}.pdf`);
+                let tmp_list = [];
+                for (let i in page) {
+                    tmp_list.push(page_list[page[i - 1]]);
                 }
+                page_list = tmp_list;
+                pages = page_list.length;
             }
             while (page_list.length) {
                 let new_page = [];
@@ -154,7 +147,7 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                             let arrayBuffer = response.data;
                             let a = new Uint8Array(arrayBuffer);
                             let s = Uint8ToBase64(a);
-                            let c = Crypto.AES.decrypt(s, authorKey, {
+                            let c = Crypto.AES.decrypt(s, Crypto.enc.Utf8.parse(authorKey), {
                                 mode: Crypto.mode.ECB,
                                 padding: Crypto.pad.Pkcs7
                             });
@@ -163,10 +156,11 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
                                 index: i,
                                 buffer: buffer,
                             });
-                            console.log(`已下载第${/.*_pdf\/(.*).pdf/.exec(page_url)[1]}页PDF，共下载${buffer_list.length}/${pages}页`);
-                            if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${/.*_pdf\/(.*).pdf/.exec(page_url)[1]}.pdf`, buffer);
+                            console.log(`已下载第${i + 1}页PDF，共下载${buffer_list.length}/${pages}页`);
+                            if (!merge) fs.writeFileSync(`${id}/${id}-${detail['Data']['Title']}-${i + 1}.pdf`, buffer);
                         })
                         .catch((error) => {
+                            console.log(error);
                             new_page.push(page_url);
                             console.log(`第${i + 1}页PDF下载失败`);
                         });
@@ -188,4 +182,3 @@ axios.get('https://bridge.51zhy.cn/transfer/Content/Detail', {params: detail_par
         }
     })
 });
-
