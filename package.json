@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3",
     "crypto-js": "^3.1.9-1",
     "hummus": "^1.0.108",
     "memory-streams": "^0.1.3",
