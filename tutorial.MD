@@ -73,6 +73,7 @@ function deleteKey(data) {
     return data;
 }
 ```
+
     -  搜索`setToken`找到setToken函数，初步判断setToken主要是将Object类型的data根据一定格式转为字符串后加入混淆字符`OI2W_YeeUw%OHutl`后再加密：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230424217-372048383.png)
         - 搜索`MbnVH`找到MbnVH函数，用来判断变量类型
@@ -114,5 +115,6 @@ function encryption(val) {
     return Crypto.SHA1(val.toString()).toString(Crypto.enc.Hex);
 }
 ```
+
 * 至此已经知道了三个关键字段的构造方法，伪装一个`/bind`请求测试，返回结果成功：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209232348962-1384123583.png)
