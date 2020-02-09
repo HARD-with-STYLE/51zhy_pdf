@@ -74,7 +74,7 @@ function deleteKey(data) {
 }
 ```
 
-    -  搜索`setToken`找到setToken函数，初步判断setToken主要是将Object类型的data根据一定格式转为字符串后加入混淆字符`OI2W_YeeUw%OHutl`后再加密：
+-  搜索`setToken`找到setToken函数，初步判断setToken主要是将Object类型的data根据一定格式转为字符串后加入混淆字符`OI2W_YeeUw%OHutl`后再加密：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230424217-372048383.png)
         - 搜索`MbnVH`找到MbnVH函数，用来判断变量类型
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230649857-415147078.png)
@@ -96,7 +96,7 @@ function setToken(data) {
     return encryption(s,1);
 }
 ```
-    - Token的值最终与encryption函数有关，将encryption转为utf-8编码\x65\x6E\x63\x72\x79\x70\x74\x69\x6F\x6E，找到位置：
+- Token的值最终与encryption函数有关，将encryption转为utf-8编码\x65\x6E\x63\x72\x79\x70\x74\x69\x6F\x6E，找到位置：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209231227682-1522025134.png)
     - 将174转为16进制为0xae，在`app.*.js`中找到定义：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209231355848-862668824.png)
