@@ -1,11 +1,14 @@
-电子工业出版社“悦读”PDF下载
+电子工业出版社“悦读” / “可知”PDF下载
 ====================
-[悦读](https://yd.51zhy.cn/)  
-测试时间：2020/02/07 20点22分 Release v1.0.8  
+[悦读](https://yd.51zhy.cn/) [可知](https://www.keledge.com/)   
+测试时间：2020/02/07 20点22分 Release v1.0.8/v1.0.0
 如果该repo对大家有帮助，给个star鼓励鼓励吧~  
 
 ### 免责声明
 **请自觉遵守法律法规，本脚本仅供学习参考，所有下载的PDF请在24小时内删除，请勿传播，一切法律责任由用户自己承担，与本人无关**   
+
+### 构造可知DeviceToken、nouce与token
+[过程](https://github.com/shylocks/51zhy_pdf/blob/master/tutorial.MD) 
 
 ### 部署过程
 windows用户可跳过部署过程，直接下载[编译好的exe](https://github.com/shylocks/51zhy_pdf/releases)。由于无法打包hummus库，使用`index.exe [id]`下载完成后，再调用`merge_pdf [id]`合成   
