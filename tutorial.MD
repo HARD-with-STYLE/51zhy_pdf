@@ -76,15 +76,15 @@ function deleteKey(data) {
 
 -  搜索`setToken`找到setToken函数，初步判断setToken主要是将Object类型的data根据一定格式转为字符串后加入混淆字符`OI2W_YeeUw%OHutl`后再加密：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230424217-372048383.png)
-        - 搜索`MbnVH`找到MbnVH函数，用来判断变量类型
+    - 搜索`MbnVH`找到MbnVH函数，用来判断变量类型
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230649857-415147078.png)
-        - 搜索_0x1e733e找到定义，发现其上方的与_0x591b6a有关。    
+    - 搜索_0x1e733e找到定义，发现其上方的与_0x591b6a有关。    
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230749904-1122989337.png)
-        - 在`app.*.js`中搜索fZjL无果，转到`vendor.*.js`中搜索，找到定义：
+    - 在`app.*.js`中搜索fZjL无果，转到`vendor.*.js`中搜索，找到定义：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230933413-1405415823.png)
-        - 继续在`vendor.*.js`中搜索jFbC，找到定义：
+    - 继续在`vendor.*.js`中搜索jFbC，找到定义：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209231003475-281772442.png)
-        - 将未知量替换后，setToken代码如下：
+    - 将未知量替换后，setToken代码如下：
 ```
 function setToken(data) {
     let c = Object.assign({}, data);
