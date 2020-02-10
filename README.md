@@ -1,14 +1,18 @@
 电子工业出版社“悦读” / “可知”PDF下载
 ====================
-[悦读](https://yd.51zhy.cn/) [可知](https://www.keledge.com/)   
-测试时间：2020/02/07 20点22分 Release v1.0.8/v1.0.0
+[悦读](https://yd.51zhy.cn/) [可知](https://www.keledge.com/) 
+悦读本次更新加入手机验证并混淆了提交的DeviceKey，且一次校验失败/短时间多次请求PDF就会拉黑IP。
+可知在8点测试运行通过后，发现代码再次更新，且最新的时间戳为21点（前端同学996辛苦了），故本项目停止更新。  
+感谢@sqlsec @zhubo @Dark-Existed @hanxi对本项目的帮助与启发，仍有需要的同学可参考Tips中稍加修改后自行下载。  
 如果该repo对大家有帮助，给个star鼓励鼓励吧~  
 
 ### 免责声明
 **请自觉遵守法律法规，本脚本仅供学习参考，所有下载的PDF请在24小时内删除，请勿传播，一切法律责任由用户自己承担，与本人无关**   
 
-### 构造可知DeviceToken、nouce与token
-[过程](https://github.com/shylocks/51zhy_pdf/blob/master/tutorial.MD) 
+### Tips
+* [生成DeviceToken、nouce与token](https://github.com/shylocks/51zhy_pdf/blob/master/turtorial/tutorial.MD) 
+* [生成Devicekey](https://github.com/shylocks/51zhy_pdf/blob/master/turtorial/devicekey.MD) 
+* [逃课下载思路](https://github.com/shylocks/51zhy_pdf/blob/master/turtorial/download.MD) 
 
 ### 部署过程
 windows用户可跳过部署过程，直接下载[编译好的exe](https://github.com/shylocks/51zhy_pdf/releases)。由于无法打包hummus库，使用`index.exe [id]`下载完成后，再调用`merge_pdf [id]`合成   

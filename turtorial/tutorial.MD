@@ -37,12 +37,12 @@ function newGuid() {
 ```
 * 返回`/bind`的代码，请求中的data实际只有三个字段，与看到XHR请求中字段数量不一致，判断是做了一个拦截器，而一般的vue-cli项目中使用的http请求库为axios，所以直接搜索interceptors找到拦截器代码。
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209225211974-1232089463.png)
-* 所有的字段均在拦截器中定义吗，其中nonce字段为调用的uuid函数，直接搜索`['prototype']['uuid']`，找到函数定义：
+* 所有的字段均在拦截器中定义，其中nonce字段为调用的uuid函数，直接搜索`['prototype']['uuid']`，找到函数定义：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209225358943-634263820.png)
     - 函数中仅有`a66_0x39d4('0xb9')`是未知的，调用函数，找到对应数值为'0123456789abcdef'：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209225449940-18013136.png)
     - 拖进jsnice，再稍加修饰，发现nouce是生成一个36位的uuid:
-```
+```js
 function uuid() {
     let s = [];
     for (let i = 0; i < 36; i++)
@@ -60,7 +60,7 @@ function uuid() {
         - 搜索`['prototype']['deleteKey']`找到deleteKey函数：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209230118415-459176892.png)
         - 稍加修饰,deleteKey函数就是删除无用字段：
-```
+```js
 function deleteKey(data) {
     for (let word in data) {
         if (data.hasOwnProperty(word)) {
@@ -85,7 +85,7 @@ function deleteKey(data) {
     - 继续在`vendor.*.js`中搜索jFbC，找到定义：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209231003475-281772442.png)
     - 将未知量替换后，setToken代码如下：
-```
+```js
 function setToken(data) {
     let c = Object.assign({}, data);
     let s = Object.keys(c).map(function (k) {
@@ -110,7 +110,7 @@ function setToken(data) {
     - 根据_doReset中定义的数组与crypto-js中SHA1与MD5代码比对，发现Ff/Y对应的是SHA1：
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200209232056660-237578483.png)
     - 经过修饰，encryption函数的代码如下，将字符串SHA1加密后再Hex编码：
-```
+```js
 function encryption(val) {
     return Crypto.SHA1(val.toString()).toString(Crypto.enc.Hex);
 }
