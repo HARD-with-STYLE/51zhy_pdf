@@ -30,4 +30,4 @@ saveByteArray(`${Math.floor((new Date()).getTime() / 1000)}-${this['index']}.pdf
 如果能够得到私钥与链接一样可以达到目的下载的目的。
 * 根据法1找到请求的部分，在case 0x4后加入`console.log(_0x20a045['sent'])`，打印出私钥，并将修改过的文件覆盖。
 ![](https://img2018.cnblogs.com/blog/394393/202002/394393-20200210231426951-181852541.png)
-* 参考hanxi/blog#44 或 sqlsec/keledge_pdf，即可下载。
+* 参考[hanxi/blog#44](https://github.com/hanxi/blog/issues/44) 或 [sqlsec/keledge_pdf](https://github.com/sqlsec/keledge_pdf)，即可下载。
